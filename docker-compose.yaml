@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+
+  mariadb:
+    container_name: mariadb
+    hostname: mariadb
+    image: mariadb:10.7.1-focal
+    ports:
+      - "3306:3306"
+    environment:
+      #- MYSQL_DATABASE=squared
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=user
+      - MYSQL_ALLOW_EMPTY_PASSWORD=no
+      - MYSQL_HOST=localhost
+      - MYSQL_PORT=3306
+      - MARIADB_ROOT_PASSWORD=root
+    volumes:
+      - ./mariadb/initdb.d:/docker-entrypoint-initdb.d  # /usr/local/bin/docker-entrypoint.sh
+      - ./mariadb/assets:/assets
+    restart: always
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    hostname: phpmyadmin
+    image: phpmyadmin:5.1.0
+    ports:
+      - "4001:80"
+    environment:
+      - PMA_ARBITRARY=1
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=user
+    depends_on:
+      - mariadb
+    restart: always
